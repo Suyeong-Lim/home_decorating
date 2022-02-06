@@ -4,17 +4,19 @@ import styled from "styled-components";
 
 const Main = () => {
   return (
-    <ContentsMain>
+    <ViewContents>
       <Contents />
-    </ContentsMain>
+    </ViewContents>
   );
 };
 
 export default Main;
 
-const ContentsMain = styled.section`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 3.3rem;
+const ViewContents = styled.div`
+  width: 800px;
+  box-sizing: border-box;
+  padding: 40px 0;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 0;
 `;

@@ -1,26 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import IconTag from "./IconTag";
 import ProductList from "./ProductList";
+import Tooltip from "./Tooltip";
 
 const Contents = () => {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({
-    id: 0,
-    imageUrl: "",
-    productList: [],
-  });
-
-  const getData = async () => {
-    const response = await fetch(
-      "https://cdn.ggumim.co.kr/test/image_product_link.json"
-    );
-    const data = await response.json();
-    setData(data);
-    setLoading(false);
-  };
+  const data = useSelector((state) => state.productInfo);
 
   useEffect(() => {
-    getData();
+    console.log("data render", data);
+    setLoading(false);
   }, []);
 
   const [active, setActive] = useState(false);
@@ -30,6 +21,16 @@ const Contents = () => {
     console.log(active);
   };
 
+  const [clickedId, setClickedId] = useState(null);
+  const TagClickHandler = (e) => {
+    const id = Number(e.target.id);
+    setClickedId(id);
+    if (clickedId === id) {
+      setClickedId(null);
+    }
+  };
+
+  console.log(clickedId, "clicked ID");
   return (
     <>
       {loading ? (
@@ -38,28 +39,46 @@ const Contents = () => {
         <>
           <Center>
             <ViewContentImg>
-              <Img key={data.id} data={data} src={data.imageUrl} />
-
-              {data.productList.map((item) => (
+              <Img data={data} src={data.imageUrl} />
+              {data.productList.map((item, index) => (
                 <Tag
-                  key={data.productId}
+                  key={item.productId}
+                  id={index}
                   positionX={item.pointX * 1.6}
                   positionY={item.pointY * 1.6}
+                  onClick={TagClickHandler}
                 >
-                  <Icon
-                    key={item.productId}
-                    src=" //cdn.ggumim.co.kr/storage/20211029145238AlZrQ41xtg.png"
-                  />
+                  {clickedId === index ? (
+                    <Icon
+                      id={index}
+                      src="//cdn.ggumim.co.kr/storage/20211029145330GwwumnWNSs.png"
+                    />
+                  ) : (
+                    <Icon
+                      id={index}
+                      src=" //cdn.ggumim.co.kr/storage/20211029145238AlZrQ41xtg.png"
+                    />
+                  )}
+                  {/* 📍 ⭐️⭐️⭐️ clikedId === index  */}
+                  {clickedId === index && <Tooltip item={item} />}
                 </Tag>
               ))}
             </ViewContentImg>
           </Center>
           <FurnitureSwiper>
             <SwiperWrapper>
-              {data.productList.map((item) => (
-                <ItemPicture key={item.productId} isActive={active}>
+              {data.productList.map((item, index) => (
+                //누른 id 값만 isactive true 로
+                <ItemPicture
+                  key={item.productId}
+                  // 📍⭐️⭐️⭐️
+                  isActive={clickedId === index ? true : false}
+                  onClick={TagClickHandler}
+                >
                   <ItemSubImg
                     onClick={clickHandler}
+                    // ❓❓ ⭐️⭐️⭐️ //왜 돼는지....다시 보기
+                    id={index} // 엥 이게 되네..?
                     background={item.imageUrl}
                     currentId={currentId}
                   ></ItemSubImg>
@@ -94,19 +113,6 @@ const ViewContentImg = styled.div`
 const Img = styled.img`
   width: 100%;
   height: auto;
-`;
-
-const Tag = styled.div`
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  top: ${(props) => props.positionX}px;
-  left: ${(props) => props.positionY}px;
-`;
-
-const Icon = styled.img`
-  width: 32px;
-  height: 32px;
 `;
 
 const FurnitureSwiper = styled.div`

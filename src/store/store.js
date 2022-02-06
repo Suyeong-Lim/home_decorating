@@ -1,9 +1,15 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
+// const [data, setData] = useState({
+//   id: 0,
+//   imageUrl: "",
+//   productList: [],
+// });
+
 //slice 만들기
 const productSlice = createSlice({
   name: "productReducer",
-  initialState: { productInfo: [] },
+  initialState: { productInfo: { id: "", imageUrl: "", productList: [] } },
   reducers: {
     product(state, action) {
       state.productInfo = action.payload;
